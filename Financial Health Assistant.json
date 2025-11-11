@@ -1,0 +1,395 @@
+{
+  "name": "Financial Health Dashboard assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        }
+      },
+      "id": "db6b94b5-6636-4137-99f7-9341811960b8",
+      "name": "Hourly Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        272,
+        144
+      ],
+      "id": "bb0bd7fa-0b48-45ad-9340-63d11d8b30f4",
+      "name": "merge all data"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is incomestatement {{ $json.incomeStatement }}\nThis is cashflow {{ $json.cashFlow }}\nthis is balancesheet {{ $json.balanceSheet }}",
+        "options": {
+          "systemMessage": "Your name is Fred.\nYou are a professional financial analyst.\nYou will receive financial data for a small business for the year 20**.\nThe data includes:\n- incomeStatement (monthly data)\n- cashFlow (quarterly summary)\n- balanceSheet (end of year snapshot)\n\nYou will have 2 google doc tools. You will receive the following via the Google Docs tool in this workflow:  \n1. A Google Docs document representing the **report template** (with sections and headings provided).  \n2. A second Google Docs document containing the **company overview & brief history** (industry, products/services, business context).  \n\nYour task: Generate a **consistent, well-structured financial report** using the template document. For markdown, use single asterisks to write bold letters like *bold*  not **bold**\nUse the company overview document to incorporate context about the business into your report. Fill in each section of the template clearly, concisely, and professionally, and ensure the company’s background is referenced appropriately.\n\nFill in each section with the business’s data from the JSON and provide narrative analysis in each section\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        608,
+        160
+      ],
+      "id": "459b345e-5fe3-4bca-b56a-a26bd0b89db5",
+      "name": "AI financial analyst"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        576,
+        352
+      ],
+      "id": "baae599a-dfa1-4149-8aa5-581a498ae9a9",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LAEkktW2n0uh09hf",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1tz7RuuQAglrIQOsd3-qBYruPI4AHDnFuXjwTrpRynb0",
+          "mode": "list",
+          "cachedResultName": "small business financial data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tz7RuuQAglrIQOsd3-qBYruPI4AHDnFuXjwTrpRynb0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Income Statement (Monthly)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tz7RuuQAglrIQOsd3-qBYruPI4AHDnFuXjwTrpRynb0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        64,
+        32
+      ],
+      "id": "1b246cd6-dabb-4cf7-9e8f-4427ad9ad617",
+      "name": "Income statement",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b2UNSUJvGnLJ05xL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1tz7RuuQAglrIQOsd3-qBYruPI4AHDnFuXjwTrpRynb0",
+          "mode": "list",
+          "cachedResultName": "small business financial data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tz7RuuQAglrIQOsd3-qBYruPI4AHDnFuXjwTrpRynb0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 173970594,
+          "mode": "list",
+          "cachedResultName": "Balance Sheet (End of Year 20**)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tz7RuuQAglrIQOsd3-qBYruPI4AHDnFuXjwTrpRynb0/edit#gid=173970594"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        64,
+        352
+      ],
+      "id": "ea503228-b45a-45c0-b751-9b6903d6cf49",
+      "name": "balance sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b2UNSUJvGnLJ05xL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1tz7RuuQAglrIQOsd3-qBYruPI4AHDnFuXjwTrpRynb0",
+          "mode": "list",
+          "cachedResultName": "small business financial data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tz7RuuQAglrIQOsd3-qBYruPI4AHDnFuXjwTrpRynb0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 130153318,
+          "mode": "list",
+          "cachedResultName": "Cash Flow Summary (Quarterly)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tz7RuuQAglrIQOsd3-qBYruPI4AHDnFuXjwTrpRynb0/edit#gid=130153318"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        48,
+        192
+      ],
+      "id": "90445c85-0fd1-4f04-86f2-e09a5f07beeb",
+      "name": "cashflow (quarterly)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b2UNSUJvGnLJ05xL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// This Function node runs *once for all items*\n// Assumes previous Merge node (or separate input nodes) have been combined into one stream\n\n// Get all items from the previous node\nconst items = $input.all();\n\n// Extract and group data\nconst incomeStatement  = [];\nconst cashFlow         = [];\nlet   balanceSheet     = {};\n\nfor (const item of items) {\n  const json = item.json;\n\n  // Check for monthly income statement row\n  if (json.Month && json.Revenue !== undefined && json.netProfit !== undefined) {\n    incomeStatement.push({\n      month:             json.Month,\n      revenue:           json.Revenue,\n      cogs:              json.Cogs ?? null,\n      grossProfit:       json.grossProfit ?? null,\n      operatingExpenses: json.operatingExpenses ?? null,\n      netProfit:         json.netProfit\n    });\n    continue;\n  }\n\n  // Check for cash-flow row\n  if (json.Quarter && json.operatingCashFlow !== undefined && json.netCashChange !== undefined) {\n    cashFlow.push({\n      quarter:   json.Quarter,\n      operating: json.operatingCashFlow,\n      investing: json.InvestingCashFlow ?? null,\n      financing: json.financingCashFlow ?? null,\n      netChange: json.netCashChange\n    });\n    continue;\n  }\n\n  // Check for balance sheet snapshot\n  if (json.totalAssets !== undefined && json.totalLiabilities !== undefined) {\n    balanceSheet = {\n      assets: {\n        cash:               json.cash               ?? null,\n        accountsReceivable: json.accountsReceivable ?? null,\n        inventory:          json.inventory          ?? null,\n        equipmentNet:       json.equipmentNet       ?? null,\n        totalAssets:        json.totalAssets\n      },\n      liabilities: {\n        accountsPayable: json.accountsPayable ?? null,\n        bankLoan:        json.bankLoan        ?? null,\n        totalLiabilities:json.totalLiabilities\n      },\n      equity: {\n        ownerEquity:             json.ownerEquity             ?? null,\n        totalLiabilitiesAndEquity: json.totalLiabilitiesAndEquity ?? null\n      }\n    };\n  }\n}\n\n// Build the output item\nreturn [\n  {\n    json: {\n      incomeStatement,\n      cashFlow,\n      balanceSheet\n      \n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        160
+      ],
+      "id": "9f32e278-5c2e-488b-a54d-402278e13c33",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1-pw_KMwLgCsQYPinhNF_RegFwQc5wTAWVOnyKyEyzD0/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        848,
+        352
+      ],
+      "id": "c5449e80-e762-4534-95b3-42db1f17151f",
+      "name": "Structure of report template",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "i5rFbacQND4mkERk",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get a document in Google Docs",
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1jEz5YAQUYLSTpXIFRHAt19ErKJzuX32BSPGFI2X3dVE/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        720,
+        400
+      ],
+      "id": "4b93d50c-473d-462a-a2d4-71a54772ff9d",
+      "name": "company overview and history",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "i5rFbacQND4mkERk",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09LLFRAPME",
+          "mode": "list",
+          "cachedResultName": "social"
+        },
+        "text": "={{ $json.output }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        960,
+        160
+      ],
+      "id": "98fe98bb-608d-4506-8606-4dbcb6c84c2e",
+      "name": "Send a message",
+      "webhookId": "61f791fc-8515-46e4-b487-a003f9909a88",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "cU5ZPlJuVUfRPTkj",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Hourly Trigger": {
+      "main": [
+        [
+          {
+            "node": "Income statement",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "balance sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "cashflow (quarterly)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge all data": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI financial analyst": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI financial analyst",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Income statement": {
+      "main": [
+        [
+          {
+            "node": "merge all data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "balance sheet": {
+      "main": [
+        [
+          {
+            "node": "merge all data",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "cashflow (quarterly)": {
+      "main": [
+        [
+          {
+            "node": "merge all data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI financial analyst",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structure of report template": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI financial analyst",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "company overview and history": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI financial analyst",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "99cadb09-17bc-4a65-81e3-765b4d21aceb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "99d3d0b58121e0db505455c8baa12ef29cc6a6ca4e101cf705c0811ae247979f"
+  },
+  "id": "gGAjdrrfyoAvTd4b",
+  "tags": []
+}
